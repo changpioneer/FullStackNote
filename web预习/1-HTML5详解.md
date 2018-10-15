@@ -298,6 +298,8 @@ document.querySelector('div').onclick=function () {
 ```
  
 ##六、获取地理定位
+
+不推荐使用，需要翻墙。
 ```javascript
   ☞  获取一次当前位置
       window.navigator.geolocation.getCurrentPosition(successCallback,errorCallback);
