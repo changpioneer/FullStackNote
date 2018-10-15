@@ -47,7 +47,7 @@ cc:ie6 + tab键
 ```
 
 audio标签的属性：
-![audio属性](https://github.com/changpioneer/FullStackNote/blob/master/picture/audio_pro.png)
+![audio属性](assets/audio_pro.png)
 
 ###2、视频标签
 谷歌浏览器不支持autoplay属性，但是加上muted属性后可以自动播放，但是视频是静音的；
@@ -57,7 +57,7 @@ audio标签的属性：
 ```
 
 video标签的属性：
-![video属性](https://github.com/changpioneer/FullStackNote/blob/master/picture/video_pro.png)
+![video属性](assets/video_pro.png)
 
 ###3、多媒体格式兼容问题
 
