@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tab 标签</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #F7F7F7;
+    }
+
+    .tabs {
+      width: 400px;
+      margin: 30px auto;
+      background-color: #FFF;
+      border: 1px solid #C0DCC0;
+      box-sizing: border-box;
+    }
+
+    .tabs nav {
+      height: 40px;
+      text-align: center;
+      line-height: 40px;
+      overflow: hidden;
+      background-color: #C0DCC0;
+      display: flex;
+    }
+
+    nav a {
+      display: block;
+      width: 100px;
+      border-right: 1px solid #FFF;
+      color: #000;
+      text-decoration: none;
+    }
+
+    nav a:last-child {
+      border-right: 0 none;
+    }
+
+    nav a.active {
+      background-color: #9BAF9B;
+    }
+
+    .cont {
+      overflow: hidden;
+      display: none;
+    }
+
+    .cont ol {
+      line-height: 30px;
+    }
+
+  </style>
+
+</head>
+<body>
+
+<div class="tabs">
+  <nav>
+    <a href="javascript:void(0);" data-cont="local">火影忍者</a>
+    <a href="javascript:void(0);" data-cont="global">死神</a>
+    <a href="javascript:void(0);" data-cont="sports">海贼王</a>
+    <a href="javascript:void(0);" data-cont="funny">灌篮高手</a>
+  </nav>
+  <section class="cont" id="local">
+    <ol>
+      <li>鸣人</li>
+      <li>佐助</li>
+      <li>卡卡西</li>
+      <li>自来也</li>
+      <li>纲手</li>
+      <li>雏田</li>
+    </ol>
+  </section>
+  <section class="cont" id="funny">
+    <ol>
+      <li>黑崎一护</li>
+      <li>石田雨龙</li>
+      <li>井上织姬</li>
+      <li>茶渡泰虎</li>
+      <li>黑崎一勇</li>
+      <li>黑崎一心</li>
+    </ol>
+  </section>
+  <section class="cont" id="global">
+    <ol>
+      <li>蒙奇·D·路飞</li>
+      <li>罗罗诺亚·索隆</li>
+      <li>娜美</li>
+      <li>乌索普</li>
+      <li>山治</li>
+      <li>托尼托尼·乔巴</li>
+      <li>妮可·罗宾</li>
+    </ol>
+  </section>
+  <section class="cont" id="sports">
+    <ol>
+      <li>樱木花道</li>
+      <li>三井</li>
+      <li>赤木</li>
+      <li>晴子</li>
+      <li>宫城良太</li>
+      <li>木暮公延5</li>
+      <li>青田龙彦</li>
+    </ol>
+  </section>
+
+</div>
+<script>
+  (function (key) {
+    //获取所有的a标签,判断有没有a标签应用了类样式
+    var aObjs = document.querySelectorAll("nav a");
+    for (var i = 0; i < aObjs.length; i++) {
+      //判断a标签是否应用了类样式
+      if (!aObjs[i].classList.contains("active")) {
+        //设置默认的第一个a标签应用类样式,同时找到a对应的section显示出来
+        aObjs[key].classList.add("active");
+        //获取第一个a标签的自定义属性的值
+        var attr = aObjs[key].dataset["cont"];
+        //attr作为id属性值获取对应的section元素
+        document.getElementById(attr).style.display = "block";
+      }
+      //为每个a注册点击事件
+      aObjs[i].onclick = function () {
+        //找到应用了active的a,干掉这个类样式,干掉这个a对应的section的样式
+        var active = document.querySelector(".active");
+        active.classList.remove("active");
+        document.getElementById(active.dataset["cont"]).style.display = "none";
+        //当前被点击的a应用类样式.同时设置对应section显示
+        this.classList.add("active");
+        document.getElementById(this.dataset.cont).style.display = "block";
+      };
+    }
+  })(3);
+
+
+</script>
+
+</body>
+</html>
