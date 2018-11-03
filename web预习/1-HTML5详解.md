@@ -1,8 +1,8 @@
-##一、H5新标签的兼容问题
+## 一、H5新标签的兼容问题
 
 H5的新标签在谷歌等浏览器是可以支持的，但是IE不支持。为了兼容IE浏览器，有两种解决方式。
 
-###解决方法一：
+### 解决方法一：
 在该标签的CSS中设置该标签display: block;然后通过DOM的方式创建这个标签document.createElement("header");
 
 ```javascript
@@ -21,7 +21,7 @@ H5的新标签在谷歌等浏览器是可以支持的，但是IE不支持。为�
     </script>
 ```
 
-###解决方法二：
+### 解决方法二：
 引入外部的html5shiv.js文件，
 `<script src="html5shiv.js"></script>`
 
@@ -37,9 +37,9 @@ cc:ie6 + tab键
 <body>
 ```
 
-##二、H5中的多媒体标签
+## 二、H5中的多媒体标签
 
-###1、音频标签
+### 1、音频标签
 谷歌浏览器不支持autoplay属性；
 
 ```html
@@ -49,7 +49,7 @@ cc:ie6 + tab键
 audio标签的属性：
 ![audio属性](assets/audio_pro.png)
 
-###2、视频标签
+### 2、视频标签
 谷歌浏览器不支持autoplay属性，但是加上muted属性后可以自动播放，但是视频是静音的；
 
 ```html 
@@ -59,7 +59,7 @@ audio标签的属性：
 video标签的属性：
 ![video属性](assets/video_pro.png)
 
-###3、多媒体格式兼容问题
+### 3、多媒体格式兼容问题
 
 以视频格式为例，如果浏览器A支持第一个格式，那就直接播放第一个视频，如果浏览器B支持第二个格式，遇到第一个格式就不会执行，遇到第二个可以支持的，那么才播放。
 
@@ -89,7 +89,7 @@ video标签的属性：
  week ： 显示第几周
  time：  显示时间
 ```
-###2、智能表单控件的属性
+### 2、智能表单控件的属性
 
 ```html
  ◆form属性：   
@@ -124,7 +124,7 @@ video标签的属性：
 
 ### 1、获取页面元素的三种方式
 
-```js
+```javascript
   ☞ document.querySelector("选择器")；
      备注：
         选择器： 可以是css中的任意一种选择器
@@ -217,7 +217,7 @@ video标签的属性：
 </body>
 ```
 
-##四、文件读取
+## 四、文件读取
 
 ```html
   ☞  FileReader
@@ -287,7 +287,7 @@ document.querySelector('div').onclick=function () {
 };
 ```
 
-##五、获取网络状态
+## 五、获取网络状态
 ```javascript
   ☞ 获取当前网络状态
          window.navigator.onLine //返回一个布尔值
@@ -297,7 +297,7 @@ document.querySelector('div').onclick=function () {
          2. window.onoffline
 ```
  
-##六、获取地理定位
+## 六、获取地理定位
 
 不推荐使用，需要翻墙。
 ```javascript
@@ -313,7 +313,7 @@ document.querySelector('div').onclick=function () {
   ☞ 分析地理定位小案例
 ```
 
-##七、本地存储
+## 七、本地存储
 
 ```javascript
    ☞发展：
