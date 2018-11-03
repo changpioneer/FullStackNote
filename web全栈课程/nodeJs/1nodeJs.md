@@ -1,10 +1,10 @@
-##WebStorm配置nodejs
+## WebStorm配置nodejs
 1. 下载安装[nodejs](https://nodejs.org/en/)
 
 2. 配置WebStorm
 ![配置WebStorm](picture/nodejs1-1.png)
 
-##[文件系统](http://nodejs.cn/api/fs.html#fs_fs_readfilesync_path_options)
+## [文件系统](http://nodejs.cn/api/fs.html#fs_fs_readfilesync_path_options)
 1. 引入文件系统，在文件头添加如下代码
 
 ~~~javascript
@@ -31,7 +31,7 @@ fs.readFile('./README.md', function (err, data) {
 });
 ~~~
 
-##Buffer
+## Buffer
 
 ~~~javascript
 // 创建一个长度为 10、且用 0 填充的 Buffer。
@@ -62,7 +62,7 @@ console.log(data5.toString('base64'));
 console.log(data5.toString('utf-8'));
 ~~~
 
-##HTTP
+## HTTP
 
 1. 引入HTTP模块
 ~~~javascript
