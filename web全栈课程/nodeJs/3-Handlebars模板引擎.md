@@ -9,11 +9,13 @@
 
 
 <h1 id="1">页面渲染</h1>
-```js
+
+```javascript
 res.render(tplName, ctx)
 ```
 
 <h1 id="2">设置模板页</h1>
+
 ## 默认模板页
 如果不设置模板页，则默认使用layout.hbs。在layout.hbs中，会将其他hbs的内容填充进{{{body}}}里面，所以页面的公共部分(比如导航栏)就可以写在layout.hbs中。
 
