@@ -6,6 +6,8 @@
     *  [路由传参](#5)
     *  [错误处理](#6)
     *  [模板引擎:Handlebars](#7)
+    *  [帮助方法Helper](#8)
+    *  [部分视图partial](#9)
 
 
 <h1 id="1">页面渲染</h1>
@@ -150,6 +152,278 @@ next(createError(404, '我错愕'));//需要http-errors模块
 > - 使用@index，@key
 > - 遍历对象 @key
 > - 结合{{else}}，当数组为空时显示特别信息
-       
+
+
+#### 通过条件语句实现switch语句
+
+1. 在路由中处理数据
+
+```js
+router.get('/', function(req, res, next) {
+  let type = 'bbb';
+  res.render('index', {
+    title: 'Express',
+    typeSwitch:{
+      isA : type == 'aaa',
+      isB : type == 'bbb',
+      isC : type == 'ccc'
+    }
+  });
+});
+```
+
+2. 模板语句
+
+```html
+{{#if typeSwitch.isA}}
+    <div>aaa</div>
+    {{else if typeSwitch.isB}}
+        <div>bbb</div>
+    {{else if typeSwitch.isC}}
+        <div>ccc</div>
+    {{else}}
+        <div>default</div>
+{{/if}}
+```
+
+<h1 id="8">帮助方法Helper</h1>
+
+要使用帮助方法需要先引用hbs模块。
+```js
+var hbs = require('hbs');
+```
+
+#### 行内helper
+最终输出只是字符串的helper 
+
+- 声明helper:  hbs.registerHelper('addOne', function (num){ return xx;}
+- 使用helper:  {{addOne arg1}}
+
+常见使用场景:数据格式化
+
+#### 块级helper
+最终输出是html的helper
+
+- 注册扩展代码块helper
+```js
+// 注册扩展代码块helper
+const blocks = {};//代码块缓存对象
+hbs.registerHelper('myExtend', function (name, context) {
+    // context 是上下文，保存有用方法和数据，最后一个参数永远是context
+    let block = blocks[name]; // block用来存放代码块
+    if (!block) {
+        block = blocks[name] = [];
+    }
+    // 编译指令中代码块并放入block
+    console.log(this);
+    block.push(context.fn(this));
+    // 与context.fn()配对还有一个方法
+    // context.inverse()
+});
+
+hbs.registerHelper('myBlock', function (name) {
+    const val = (blocks[name] || []).join('\n')
+    blocks[name] = [];//清空缓存
+    return val;
+});
+```
+
+- 在视图页面中写的代码通过这样的方式保存进内存中。
+```html
+{{#myExtend 'myName'}}
+    <script>
+       function mmm() {
+           
+       };
+    </script>
+{{/myExtend}}
+```
+
+- 在使用的地方取出来使用.
+```html
+{{{myBlock 'myName'}}}
+```
+
+#### helper哈希传参
+1. 注册helper；
+```js
+hbs.registerHelper('myLinks', function (options) {
+    const {text, href, style} = options.hash;
+
+    return `<a herf="${href}" style="${style}">${text}</a>`;
+});
+```
+
+2. 在layout.hbs中传参；
+```html
+{{myLinks text='开课吧' href='http://www.kaikeba.com' style='color: red'}}
+```
+
+3. 在上面的案例中，显示出来的是字符串，而不是a标签；
+```html
+<a herf="http://www.kaikeba.com" style="color: red">开课吧</a>
+```
+**解决方法:**
+
+- 使用hbs.SafeString
+```js
+hbs.registerHelper('myLinks', function (options) {
+    const {text, href, style} = options.hash;
+    return new hbs.SafeString(`<a herf="${href}" style="${style}">${text}</a>`);
+});
+```
+
+- 使用三个大括号
+```html
+{{{myLinks text='开课吧' href='http://www.kaikeba.com' style='color: red'}}}
+```
+
+4. hbs.Utils.escapeExpression
+
+将html字符串以字符串输出。
+```js
+hbs.registerHelper('myLinks', function (options) {
+    const {text, href, style} = options.hash;
+    const texts = '<span>fsfs</span>';
+    return new hbs.SafeString(`<a herf="${href}" style="${style}">${hbs.Utils.escapeExpression(texts)}</a>`);
+});
+```
+
+
+#### 抽取
+在根目录下创建helpers目录，在helpers中创建index.js，将之前的注册代码写在index.js中。在app.js中引入index.js即可。因为hbs是单例，只需要执行就可以使用，不用通过module.exports来引用。
+
+```js
+const hbs = require('hbs');
+```
+
+#### [N多帮助方法库](https://github.com/helpers/handlebars-helpers)
+```
+const helpers = require('handlebars-helpers');
+//只导入一部分，并且和我们handlebars挂钩
+helpers.comparsion({handlebars: hbs.handlebars});
+```
+
+<h1 id="9">部分视图partial</h1>
+
+(每次编写新的partial，需要重启) 
+
+### 使用步骤
+
+1. 注册partial目录(代码可以写在app.js或者上面抽取的helpers目录下，将来一些小的组件放进去);
+```js
+hbs.registerPartials(path.join(__dirname, '../views/partials'))
+```
+2. 在partials下面创建nav.hbs,将导航组件放进去;
+3. 在layout.hbs中使用该组件
+```html
+{{> nav}}
+```
+
+### 动态partial
+1. 注册动态partial，其实就是注册一个helper，whichPartial就是一个方法；
+```js
+// 动态partial
+hbs.registerHelper('whichPartial', function (name) {
+    return name;
+});
+```
+2. 在layout.hbs中使用；
+```html
+{{> (whichPartial partialName)}}
+```
+partialName是个参数，传递进whichPartial方法中，返回一个值。比如在中间件中根据登录状态显示不同的布局。
+
+```js
+let isLogin = true;
+res.locals.partialName = isLogin ? "abc1" : "nav2";
+```
+>这块也可以通过if-else来实现视图切换
+
+### 块级部分视图 partial-block
+
+#### 错误处理
+
+如果nav视图不存在则显示下面的布局
+
+```html
+{{#> nav}}
+  出现错误时，您会看到这句话
+{{/nav}}
+```
+
+#### 使用块级partial传递内容
+1. 在partials下面创建win.hbs;
+```html
+<style type="text/css">
+    .winow{
+        color: #00B7FF;
+    }
+</style>
+
+<div class="winow">
+    {{> @partial-block}}
+</div>
+```
+2. 在layout.hbs中使用该组件，这里的div内容会被搬迁到win.hbs中，然后显示在layout.hbs，所以字体颜色会变；
+```html
+{{#> win}}
+    <div>这里是窗口内容</div>
+{{/win}}
+```
+
+#### 使用块级partial传递参数
+1. 和上面一样，在partials下面创建win.hbs，里面有个参数myTitles;
+
+```html
+<style type="text/css">
+    .winow{
+        color: #00B7FF;
+    }
+</style>
+
+<div class="winow">
+    <div>标题：{{myTitles}}</div>
+    {{> @partial-block}}
+</div>
+```
+
+2. 在layout.hbs中使用该组件，这里myTitles后面的值可以传递给上面的myTitles。或者myTitles后面也可以是参数，通过路由来传递值。
+```html
+{{#> win myTitles='这里是窗口标题'}}
+        <div>这里是窗口内容</div>
+{{/win}}
+
+或者：
+{{#> win myTitles=others}}
+        <div>这里是窗口内容</div>
+{{/win}}
+```
+
+#### 使用布局partial
+1. 在partials下面创建layout.hbs，以后使用的时候向里面的top、bottom填充内容;
+```html
+<div>
+    {{> top}}
+</div>
+
+<div>
+    {{> bottom}}
+</div>
+```
+2. 使用
+
+```html
+{{#> layout}}
+      {{#*inline 'top'}}
+          这是top
+      {{/inline}}
+
+      {{#*inline 'bottom'}}
+          这是bottom
+      {{/inline}}
+  {{/layout}}
+```
+
 
 
