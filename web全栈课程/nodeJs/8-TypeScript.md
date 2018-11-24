@@ -58,6 +58,7 @@ console.log(Color[1]);//Red
 
 <h1 id="5">5.函数</h1>
 - 函数中使用类型约束
+
 ```ts
    // 函数中使用类型约束
    function greeting(person: string): string {
@@ -66,7 +67,7 @@ console.log(Color[1]);//Red
 
     //不返回值
    function greeting(person: string): void {
-     //```
+     //····
    }
 ```
 
