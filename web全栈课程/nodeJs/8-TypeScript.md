@@ -76,9 +76,11 @@ console.log(Color[1]);//Red
 - 函数的可选参数
 - 函数参数的默认值
 
+>函数可选参数不能有默认值
+
 ```js
-// first是必要参数，last可选，last有默认值
-function buildName(first: string = 'James', last?: string = 'Harden') {
+// first是必要参数，last可选
+function buildName(first: string = 'James', last?: string) {
   return first + last;
 }
 ```
@@ -87,6 +89,18 @@ function buildName(first: string = 'James', last?: string = 'Harden') {
 buildName('tom', 'jerry');
 buildName('tom'); // 可选参 last?
 buildName(); // 默认值
+```
+
+- 方法重载
+
+TypeScript中可以实现方法重载，但需要先声明在实现
+```
+function f(a: string):string;
+function f(a: number):number;
+function f(a: any):any {
+    if(typeof a === 'string'){...}
+    else {...}
+}
 ```
 
 <h1 id="6">6.接口</h1>
@@ -161,10 +175,6 @@ class Dog extends Animal {
   move(distance: number) {// 方法重写overwrite
     super.move(distance);
     console.log('很快');
-  }
-
-  move(a: number, b: number) {// 方法重载
-    console.log('移动了' + (a + b) + '米');
   }
 }
 ```
