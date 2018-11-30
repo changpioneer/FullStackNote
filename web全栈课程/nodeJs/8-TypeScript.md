@@ -9,6 +9,7 @@
     *  [泛型](#8)
     *  [模块](#9)
 
+[TypeScript中文文档](https://www.tslang.cn/docs/home.html)
 
 TypeScript：强类型的JS，ES6超集
 <h1 id="1">1.类型约束/类型注解</h1>

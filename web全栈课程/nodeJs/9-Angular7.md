@@ -3,6 +3,8 @@
     *  [用户登录、注册功能](#2)
     *  [登录表单](#3)
     *  [发送登录请求](#4)
+    *  [模块化](#5)
+    *  [用户注册](#6)
 
 
 <h1 id="1">1.Angular7的使用(学习中心开发)</h1>
@@ -102,6 +104,16 @@ app.component.html
 
 ###  1. 表单校验：模板驱动表单校验
 
+```
+@NgModule({
+  imports: [
+    FormsModule, // 使用模板驱动表单
+  ],
+})
+export class AppModule {
+}
+```
+
 ​第一步：导入FormsModule
 
 ​第二步：创建数据模型modle=LoginUser{phone, password}
@@ -191,14 +203,39 @@ app.component.html
 
 ### 2. 导入HttpClient模块才能使用http请求
 
+- HttpClient模块: 导入到BrowserModule后面
 ```
 @NgModule({
   imports: [
-    FormsModule, // 使用模板驱动表单
+    HttpClientModule, 
   ],
 })
 export class AppModule {
 }
+```
+
+- 依赖注入：使用服务时候只管使用，不管实例化
+
+```
+  constructor(private http: HttpClient)
+```
+
+- 发送请求
+
+```
+  post:  this.http.post(url，body，config)
+
+  get: this.http.get(url, config)
+
+  put: this.http.put(url，body，config)
+
+  del: this.http.del(url, config)
+```
+
+- 响应处理: 得到一个Observable
+
+```
+  this.http.post(url，body，config).subscribe(next,error)
 ```
 
 
@@ -264,8 +301,25 @@ app.use(session({
   3) session使用
 
 - 赋值 req.session.xx = xx;
-- 删除 delete req.session.xx
+- 获取 req.session.xx;
+- 删除 delete req.session.xx;
 
+  4)将session信息存入数据库
+
+npm i -S express-mysql-session
+
+```js
+app.use(cookieParser('its a secret'));
+const Store = require('express-mysql-session')(session);
+const {pool} = require('./databases/db.js');
+const store = new Store(null, pool);
+app.use(session({
+    store, // 设置session存储为mysql，注意当前数据库用户需要表创建权限
+    secret: 'its a secret',//秘钥
+    resave: false,
+    saveUninitialized: false
+}));
+```
 
 ### 7.依赖注入
 
@@ -279,3 +333,158 @@ export class UserService {
 
 }
 ```
+
+
+
+<h1 id="5">5.模块化</h1>
+
+## 1.重构用户注册、登录
+
+#### 1. 提取app路由至独立路由模块AppRoutingModule(app-routing.module.ts)
+- 创建AppRoutingModule
+- 将全局路由在其中配置
+- 在AppModule中引入该模块
+
+```js
+const routes: Routes = [
+  {path: '', pathMatch: 'full', redirectTo: 'user/login'},
+  {path: '**', redirectTo: 'user/login'},
+];
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+```
+
+```js
+imports: [
+    AppRoutingModule //在AppModule中引入该模块
+  ],
+```
+
+#### 2. 提取登录、注册到用户模块UserModule
+
+- 创建UserModule和UserRoutingModule：ng g model user --routing;
+- 在AppModule中引入该模块UserModule;
+- 将之前在AppModule中声明的登录注册组件移至UserModule;
+
+```
+  declarations: [
+    LoginComponent, //登录
+    RegisterComponent, //注册
+  ],
+```
+
+- 将之前在AppModule中导入的FormsModule移至UserModule;
+- 创建登录注册组件的父组件UserComponent: ng g c user/user;
+- 将之前在AppComponent中声明的导航菜单移至user-component.html，并添加一个```<router-outlet>```;
+- 在UserRoutingModule配置路由嵌套关系;
+
+```js
+const routes: Routes = [{
+  path: 'user', component: UserComponent, children: [
+    {path: 'login', component: LoginComponent},
+    {path: 'register', component: RegisterComponent},
+  ]
+}];
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+export class UserRoutingModule {
+}
+```
+
+- 将UserModule中用到的组件、服务、类等等都放在user文件夹中;
+
+
+<h1 id="6">6.用户注册</h1>
+
+### 1.验证图形验证码
+
+- 后台nodejs安装trek-captcha,生成验证码；
+
+npm i -S trek-captcha
+
+```js
+  const captcha = require('trek-captcha')
+  router.get('/code-img', async (req, res) => {
+      try {
+          // token:是数字字母表示形式
+          // buffer:是图片数据
+          const {token, buffer} = await captcha({size: 4});
+          // session中存储该token在将来验证时使用
+          req.session.codeImg = token;
+          // 将图片数据返回给前端
+          res.json({
+              success: true,
+              data: buffer.toString('base64')
+          })
+      } catch (error) {
+          // ...
+          console.log(error);
+      }
+  })
+```
+
+前端获取验证码
+```js
+this.http.get<Result<string>>(this.url + 'image-code');
+```
+
+
+### 2.异步校验
+
+手机号查重验证：
+
+- 1)创建异步校验指令 phone-validator，在UserModule模块中声明；
+
+>命令：ng g d user/register/phone-validator
+
+```js
+  // Directive：这是一个指令
+  @Directive({
+    selector: '[appPhoneValidator]',// 选择器
+    providers: [ // 将当前类加入到NG_ASYNC_VALIDATORS中等待ng校验时调用
+      {provide: NG_ASYNC_VALIDATORS, useExisting: PhoneValidatorDirective, multi: true}
+    ]
+  })
+  export class PhoneValidatorDirective {
+  
+    constructor(private us: UserService) {}
+  
+    // 该校验器需要实现一个validate()方法
+    //control:使用该方法的控件
+    validate(control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
+      // 得到数据结构是Observable<Result<string>>，
+      // 但是当前函数需要Observable<ValidationErrors>
+      // 使用map操作符进行数据转换(rxjs编程)
+      return this.us.verifyPhone(control.value).pipe(
+        map((r: Result<string>) => {
+          // null说明校验通过,true表示校验没有通过
+          return r.success ? null : {verifyPhone: true};
+        }),
+        catchError(e => of({verifyPhone: true}))
+      );
+    }
+```
+
+- 2)在模板中声明该指令
+
+```html
+  <input name="phone" [(ngModel)]="model.phone" appPhoneValidator>
+
+  <span *ngIf="phone?.errors?.verifyPhone">手机号码已存在</span>
+```
+
+这里的appPhoneValidator就会调用PhoneValidatorDirective中的validate方法。号码唯一说明校验通过则返回null,号码重复了说明校验失败verifyPhone就为true，下面的提示信息就会显示。
+
+
+
+
+
+
+
+
+
