@@ -2,9 +2,6 @@
     *  [主要概念](#1)
     *  [创建Observable的方式](#2)
     *  [错误处理](#3)
-    *  [](#4)
-    *  [](#5)
-    *  [](#6)
 
 
 [RxJs](https://rxjs-dev.firebaseapp.com/)
