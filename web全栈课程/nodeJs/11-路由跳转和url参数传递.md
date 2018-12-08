@@ -35,12 +35,12 @@ router.navigate(['/main/course', 1])
 
 ```
 //注入激活路由：
-constructor(private route: ActivatedRoute)
-
-//获取：
-route.paramMap.subscribe((pm: ParamMap)=>{
-  pm.get('id');
-});
+constructor(private route: ActivatedRoute){
+  //获取：
+  route.paramMap.subscribe((pm: ParamMap)=>{
+     pm.get('id');
+  });
+}
 ```
 
 
