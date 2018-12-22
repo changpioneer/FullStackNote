@@ -1,0 +1,51 @@
+<!--<a routerLink="ucenter">UCENTER</a>-->
+<!--<br>-->
+<!--<a routerLink="course">COURSE</a>-->
+<!--<a [routerLink]="['/main/course', 0]">COURSE</a>-->
+
+<!--<br>-->
+<!--<input type="text" #courseId>-->
+<!--<button (click)="gotoCourse(courseId.value)">course</button>-->
+
+<!--<router-outlet></router-outlet>-->
+
+
+<div class="wrapper">
+  <!--顶部导航-->
+  <div class="top-nav">
+    <div class="wrap">
+      <a class="logo" href="http://www.kaikeba.com/"></a>
+      <ul class="nav-menu">
+        <li><a href>首页</a></li>
+        <li style="position: relative">
+          <a href (mouseenter)="showMenu=true" (mouseleave)="showMenu=false">学吧
+            <app-kkb-menu *ngIf="showMenu" [data]="menuData"></app-kkb-menu>
+          </a>
+        </li>
+        <li><a href>APP</a></li>
+        <li><a href>关于我们</a></li>
+      </ul>
+      <div class="r-menu">
+        <div class="search-box" style="position: relative">
+          <input type="text" (input)="searchCourse($event.target.value)">
+          <app-kkb-menu *ngIf="searchResult" [data]="searchResult" id="searchResult"></app-kkb-menu>
+        </div>
+        <div class="user-box" style="position: relative" (mouseenter)="showUserMenu=true"
+             (mouseleave)="showUserMenu=false">
+          <img src="http://kkbconsole2.kaikeba.com/statics/images/avatar_100_100.png"
+               class="user-avatar" width="100" height="100">
+          <div class="menu"></div>
+          <app-kkb-menu *ngIf="showUserMenu" [data]="userMenuData"></app-kkb-menu>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--内容区-->
+  <div class="content">
+    <div class="wrap">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+

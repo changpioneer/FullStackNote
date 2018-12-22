@@ -1,0 +1,6 @@
+<p>
+  father works!
+</p>
+
+<app-child *ngFor="let name of names" [name]="name" (myChange)="onMyChange($event)"></app-child>
+<app-child2 #child2></app-child2>
