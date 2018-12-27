@@ -797,25 +797,5 @@ async created(){
 
 # 6.vue生命周期
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+![vue生命周期](../../picture/vue_lifecycle.png)
 
