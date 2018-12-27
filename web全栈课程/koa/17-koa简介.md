@@ -24,6 +24,16 @@
   app.listen(3000);
 ```
 
+# 启动项目
+
+- sudo npm install -g node-dev
+- 在package.json的scripts中添加如下命令
+  ```
+    "scripts": {
+    "start": "node-dev app.js",
+    
+  },
+  ```
 # 常用API
 
 - ctx.request/response  koa封装的请求和响应对象
